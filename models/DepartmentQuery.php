@@ -9,36 +9,13 @@ namespace app\models;
  */
 class DepartmentQuery extends \yii\db\ActiveQuery
 {
-    /*public function active()
-    {
-        return $this->andWhere('[[status]]=1');
-    }*/
-
-    /**
-     * {@inheritdoc}
-     * @return Department[]|array
-     */
-    public function all($db = null)
-    {
-        return parent::all($db);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @return Department|array|null
-     */
-    public function one($db = null)
-    {
-        return parent::one($db);
-    }
-
     /**
      * Добавление сотрудника в отдел
-     * @param $employee_id
-     * @param $department_id
+     * @param int $employee_id
+     * @param int $department_id
      * @return bool
      */
-    public function addEmployee($employee_id, $department_id)
+    public function addEmployee(int $employee_id, int $department_id): bool
     {
         $ed = new EmployeeDepartment();
         $ed->employee_id = $employee_id;
@@ -48,11 +25,11 @@ class DepartmentQuery extends \yii\db\ActiveQuery
 
     /**
      * Удаление сотрудника из отдела
-     * @param $employee_id
-     * @param $department_id
+     * @param int $employee_id
+     * @param int $department_id
      * @return bool
      */
-    public function deleteEmployee($employee_id, $department_id)
+    public function deleteEmployee(int $employee_id, int $department_id): bool
     {
         if (EmployeeDepartment::find()->where(['employee_id' => $employee_id, 'department_id' => $department_id])->count() < 2) {
             return false;
@@ -65,11 +42,11 @@ class DepartmentQuery extends \yii\db\ActiveQuery
 
     /**
      * Удаление отдела, с проверкой вхождения сотрудников
-     * @param $id ID отдела
+     * @param int $id ID отдела
      * @return bool
      * @throws \yii\db\Exception
      */
-    public function safeDelete($id)
+    public function safeDelete(int $id): bool
     {
         foreach (\Yii::$app->db->createCommand('SELECT count(*) as deps_count
 FROM employee_department 
