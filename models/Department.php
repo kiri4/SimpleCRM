@@ -9,6 +9,9 @@ use Yii;
  *
  * @property int $id
  * @property string $name Наименование отдела
+ *
+ * @property EmployeeDepartment[] $employeeDepartments
+ * @property Employee[] $employees
  */
 class Department extends \yii\db\ActiveRecord
 {
@@ -43,11 +46,22 @@ class Department extends \yii\db\ActiveRecord
     }
 
     /**
-     * {@inheritdoc}
-     * @return DepartmentQuery the active query used by this AR class.
+     * Gets query for [[EmployeeDepartments]].
+     *
+     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
      */
-    public static function find()
+    public function getEmployeeDepartments()
     {
-        return new DepartmentQuery(get_called_class());
+        return $this->hasMany(EmployeeDepartment::className(), ['department_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Employees]].
+     *
+     * @return \yii\db\ActiveQuery|yii\db\ActiveQuery
+     */
+    public function getEmployees()
+    {
+        return $this->hasMany(Employee::className(), ['id' => 'employee_id'])->viaTable('employee_department', ['department_id' => 'id']);
     }
 }

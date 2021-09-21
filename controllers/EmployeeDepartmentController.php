@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\DepartmentCenter;
 use app\models\Department;
 use Yii;
 use app\models\EmployeeDepartment;
@@ -102,7 +103,7 @@ class EmployeeDepartmentController extends BaseController
     {
         $model = $this->findModel($id);
 
-        if (!Department::find()->deleteEmployee($model->employee_id, $model->department_id)) {
+        if (!DepartmentCenter::deleteEmployee($model->employee_id, $model->department_id)) {
             Yii::$app->session->setFlash('error', 'Удаление не произошло!');
         }
 

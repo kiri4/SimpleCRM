@@ -1,13 +1,15 @@
 <?php
 
-namespace app\models;
+namespace app\components;
+
+use app\models\Department;
+use app\models\EmployeeDepartment;
 
 /**
  * Репозиторий логики для работы с отделами.
  *
- * @see Department
  */
-class DepartmentQuery extends \yii\db\ActiveQuery
+class DepartmentCenter
 {
     /**
      * Добавление сотрудника в отдел
@@ -15,7 +17,7 @@ class DepartmentQuery extends \yii\db\ActiveQuery
      * @param int $department_id
      * @return bool
      */
-    public function addEmployee(int $employee_id, int $department_id): bool
+    public static function addEmployee(int $employee_id, int $department_id): bool
     {
         $ed = new EmployeeDepartment();
         $ed->employee_id = $employee_id;
@@ -29,9 +31,9 @@ class DepartmentQuery extends \yii\db\ActiveQuery
      * @param int $department_id
      * @return bool
      */
-    public function deleteEmployee(int $employee_id, int $department_id): bool
+    public static function deleteEmployee(int $employee_id, int $department_id): bool
     {
-        if (EmployeeDepartment::find()->where(['employee_id' => $employee_id, 'department_id' => $department_id])->count() < 2) {
+        if (EmployeeDepartment::find()->where(['employee_id' => $employee_id])->count() < 2) {
             return false;
         }
 
@@ -46,7 +48,23 @@ class DepartmentQuery extends \yii\db\ActiveQuery
      * @return bool
      * @throws \yii\db\Exception
      */
-    public function safeDelete(int $id): bool
+    public static function safeDelete(int $id): bool
+    {
+        if (!self::testBeforeDelete($id))
+            return false;
+
+        Department::deleteAll(['id' => $id]);
+
+        return true;
+    }
+
+    /**
+     * Проверка, если есть хоть один сотрудник с менее двумя отделами, то false
+     * @param int $id ID  отдела
+     * @return bool
+     * @throws \yii\db\Exception
+     */
+    public static function testBeforeDelete(int $id): bool
     {
         foreach (\Yii::$app->db->createCommand('SELECT count(*) as deps_count
 FROM employee_department 
@@ -54,12 +72,9 @@ WHERE employee_id in (SELECT employee_id from employee_department where departme
 GROUP by employee_id', [
             'dep_id' => $id
         ])->queryAll() as $item) {
-            if ($item['deps_count'] < 2) // если есть хоть один сотрудник с менее двумя отделами, то выходим из метода
+            if ($item['deps_count'] < 2)
                 return false;
         }
-
-        EmployeeDepartment::deleteAll(['department_id' => $id]);
-        Department::deleteAll(['id' => $id]);
 
         return true;
     }

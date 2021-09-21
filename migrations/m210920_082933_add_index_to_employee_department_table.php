@@ -24,8 +24,6 @@ class m210920_082933_add_index_to_employee_department_table extends Migration
         echo "m210920_082933_add_index_to_employee_department_table cannot be reverted.\n";
 
         $this->dropIndex('uni_index', 'employee_department');
-
-        return false;
     }
 
     /*

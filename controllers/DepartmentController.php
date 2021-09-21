@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\DepartmentCenter;
 use Yii;
 use app\models\Department;
 use app\models\DepartmentSearch;
@@ -56,9 +57,9 @@ class DepartmentController extends BaseController
 
 
             if (Yii::$app->request->post('exit'))
-                        return $this->redirect(['index']);
-                    else
-                        return $this->redirect(['update','id'=>$model->id]);
+                return $this->redirect(['index']);
+            else
+                return $this->redirect(['update', 'id' => $model->id]);
         }
 
         return $this->render('create', [
@@ -81,8 +82,8 @@ class DepartmentController extends BaseController
 
             $model->save();
 
-        if (Yii::$app->request->post('exit'))
-                        return $this->redirect(['index']);
+            if (Yii::$app->request->post('exit'))
+                return $this->redirect(['index']);
         }
 
         return $this->render('update', [
@@ -99,10 +100,9 @@ class DepartmentController extends BaseController
      */
     public function actionDelete($id)
     {
-       if (!Department::find()->safeDelete($id))
-       {
-           Yii::$app->session->setFlash('error','Удаление не произошло!');
-       }
+        if (!DepartmentCenter::safeDelete($id)) {
+            Yii::$app->session->setFlash('error', 'Удаление не произошло!');
+        }
 
         return $this->redirect(['index']);
     }

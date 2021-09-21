@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\DepartmentCenter;
 use Yii;
 use yii\base\Model;
 use yii\base\Request;
@@ -52,7 +53,7 @@ class EmployeeCreateForm extends Model
             $model->name = $this->name;
 
             if ($model->save()) {
-                Department::find()->addEmployee($model->id, $this->department_id);
+                DepartmentCenter::addEmployee($model->id, $this->department_id);
             }
 
             return $model;
